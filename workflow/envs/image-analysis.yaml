@@ -1,0 +1,13 @@
+dependencies:
+  - python=3.12.0
+  - pandas
+  - pip
+  - pandas
+  - dask
+  - numpy
+  - scikit-image
+  - pip:
+    - tifffile
+    - tqdm
+    - nd2
+    - edt

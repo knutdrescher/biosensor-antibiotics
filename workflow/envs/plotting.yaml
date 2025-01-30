@@ -1,0 +1,14 @@
+dependencies:
+  - python=3.12.0
+  - pandas
+  - pip
+  - numpy
+  - matplotlib
+  - scipy
+  - pyyaml
+  - pip:
+    - tifffile
+    - tqdm
+    - nd2
+    - cmap
+    - matplotlib-scalebar
