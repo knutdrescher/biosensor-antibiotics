@@ -11,7 +11,9 @@ distance = np.load(snakemake.input.x)
 end_time_cutoff = 6
 if snakemake.wildcards.file == "TMP-FAST_50um_2":
     end_time_cutoff = 4
-if "HMBR" in snakemake.wildcards.file:
+elif snakemake.wildcards.file == "TMP-FAST_5_pH8.0_TMP":
+    end_time_cutoff = 8
+elif "HMBR" in snakemake.wildcards.file:
     end_time_cutoff = 60
 time_cutoff = np.argwhere(time < end_time_cutoff).max()
 

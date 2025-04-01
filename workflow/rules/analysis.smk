@@ -90,7 +90,7 @@ def passes(f):
         "TMP-FAST_600_4", "TMP-FAST_500_1"
     ]:
         return False
-    elif "HMBR" in name:
+    elif "HMBR" in name or "pH" in name or "GFP" in name:
         return False
     return True
 
@@ -105,10 +105,37 @@ rule gather_slopes:
             "data/processed/nd2/{file}/slope.yaml",
             file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
         ),
-        script="src/plot_slopes.py"
+        pH6=expand(
+            "data/processed/nd2/{file}/slope.yaml",
+            file=[
+                "TMP-FAST_2_pH6.0_TMP",
+                "TMP-FAST_3_pH6.0_TMP",
+            ],
+        ),
+        pH8=expand(
+            "data/processed/nd2/{file}/slope.yaml",
+            file=[
+                "TMP-FAST_4_pH8.0_TMP",
+                "TMP-FAST_5_pH8.0_TMP",
+            ],
+        ),
+        pH85=expand(
+            "data/processed/nd2/{file}/slope.yaml",
+            file=[
+                "TMP-FAST 1 pH8.5 TMP",
+                "TMP-FAST 2 pH8.5",
+            ],
+        ),
+        GFP=expand(
+            "data/processed/nd2/{file}/slope.yaml",
+            file=[
+                "TMP-GFP 1 488",
+            ],
+        ),
+        script="src/plot_slopes.py",
     output:
         csv="data/processed/slopes.csv",
-        png="data/raw/slopes.png",
+        png="data/raw/figure/slopes.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_slopes.py"
 
@@ -126,7 +153,7 @@ rule gather_penetration:
         ),
     output:
         csv="data/processed/penetration_times.csv",
-        png="data/raw/penetration_times.png",
+        png="data/raw/figure/penetration_times.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_penetration_times.py"
 

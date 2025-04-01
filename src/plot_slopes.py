@@ -18,7 +18,45 @@ for y in snakemake.input.yamls:
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
 
+start_HMBR = len(slopes)
+end_HMBR = start_HMBR + len(snakemake.input.HMBR)
 for y in snakemake.input.HMBR:
+    with open(y) as f:
+        tmp = yaml.safe_load(f)
+        slopes.append(tmp["slope"])
+        errors.append(tmp["slope_err"])
+        size.append(tmp["max_dist"])
+
+start_pH6 = len(slopes)
+end_pH6 = start_pH6 + len(snakemake.input.pH6)
+for y in snakemake.input.pH6:
+    with open(y) as f:
+        tmp = yaml.safe_load(f)
+        slopes.append(tmp["slope"])
+        errors.append(tmp["slope_err"])
+        size.append(tmp["max_dist"])
+
+start_pH8 = len(slopes)
+end_pH8 = start_pH8 + len(snakemake.input.pH8)
+for y in snakemake.input.pH8:
+    with open(y) as f:
+        tmp = yaml.safe_load(f)
+        slopes.append(tmp["slope"])
+        errors.append(tmp["slope_err"])
+        size.append(tmp["max_dist"])
+
+start_pH85 = len(slopes)
+end_pH85 = start_pH85 + len(snakemake.input.pH85)
+for y in snakemake.input.pH85:
+    with open(y) as f:
+        tmp = yaml.safe_load(f)
+        slopes.append(tmp["slope"])
+        errors.append(tmp["slope_err"])
+        size.append(tmp["max_dist"])
+
+start_GFP = len(slopes)
+end_GFP = start_GFP + len(snakemake.input.GFP)
+for y in snakemake.input.GFP:
     with open(y) as f:
         tmp = yaml.safe_load(f)
         slopes.append(tmp["slope"])
@@ -32,21 +70,24 @@ errors = np.array(errors) * 60
 fig, axes = plt.subplots(1, 2, figsize=[8, 5])
 
 ax = axes[0]
-ax.errorbar(
-    size[:-2],
-    slopes[:-2],
-    yerr=errors[:-2],
-    linestyle="none",
-    marker="x",
-)
-ax.errorbar(
-    size[-2:],
-    slopes[-2:],
-    yerr=errors[-2:],
-    linestyle="none",
-    marker="x",
-    label="HMBR control",
-)
+labels = [None, "HMBR control", "pH 6.0", "pH 8.0", "pH 8.5", "TMP-GFP"]
+sl_normal = slice(0, start_HMBR)
+sl_HMBR = slice(start_HMBR, end_HMBR)
+sl_pH6 = slice(start_pH6, end_pH6)
+sl_pH8 = slice(start_pH8, end_pH8)
+sl_pH85 = slice(start_pH85, end_pH85)
+sl_GFP = slice(start_GFP, end_GFP)
+for sl, label in zip(
+    [sl_normal, sl_HMBR, sl_pH6, sl_pH8, sl_pH85, sl_GFP], labels
+):
+    ax.errorbar(
+        size[sl],
+        slopes[sl],
+        yerr=errors[sl],
+        linestyle="none",
+        marker="x",
+        label=label,
+    )
 ax.set_xlabel("biofilm radius (µm)")
 ax.set_ylabel("penetration slope in sec/µm")
 ax.legend()
