@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import nd2
 import yaml
@@ -7,30 +8,55 @@ from snakemake.script import snakemake
 from cmap import Colormap
 from matplotlib_scalebar.scalebar import ScaleBar
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize, TwoSlopeNorm
+from matplotlib.colors import Normalize, TwoSlopeNorm, CenteredNorm
 from tifffile import imread
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.patches import ConnectionPatch
 from scipy import stats
 from matplotlib.transforms import blended_transform_factory
 
-# plt.rc("font", family="Helvetica")
+fontsize = 5
+ticksize = 2
+tickpad = 1.5
+xlabelpad = 2
+plt.rcParams.update(
+    {
+        "font.family": "Helvetica Neue",
+        "font.size": fontsize,
+        "axes.titlesize": fontsize,
+        "axes.labelsize": fontsize,
+        "xtick.labelsize": fontsize,
+        "ytick.labelsize": fontsize,
+        "legend.fontsize": fontsize,
+        "legend.title_fontsize": fontsize,
+        "figure.titlesize": fontsize,
+        "figure.labelsize": fontsize,
+        "xtick.major.size": ticksize,
+        "ytick.major.size": ticksize,
+        "xtick.major.pad": tickpad,
+        "ytick.major.pad": tickpad,
+    }
+)
 
 
-fig = plt.figure(figsize=[18, 16], constrained_layout=True)
+# fig = plt.figure(figsize=[18, 16], constrained_layout=True)
+fig = plt.figure(
+    figsize=[7.087, 6.23], constrained_layout=True, dpi=300, layout="compressed"
+)
+# fig.set_constrained_layout_pads(hspace=0.1, wspace=0.1)
 
-img_ratio = 1.2
+img_ratio = 1.0
 gs = fig.add_gridspec(
     7,
-    11,
+    8,
     width_ratios=[
-        0.07,
+        0.05,
         img_ratio,
         img_ratio,
         img_ratio,
-        0.1,
-        img_ratio,
-        0.08,
+        # 0.1,
+        # img_ratio,
+        # 0.04,
         1,
         0.06,
         1,
@@ -42,14 +68,12 @@ gs = fig.add_gridspec(
 )
 
 top_axes = [[] for i in range(4)]
-top_axes.append([None for _ in range(5)])
-top_axes.append([None for _ in range(5)])
+for _ in range(2):
+    top_axes.append([None for _ in range(3)])
 
 for i in range(6):
-    for j_, j in enumerate(
-        list(range(1, 4)) + list(range(5, 8)) + list(range(9, 11)) + [8]
-    ):
-        if i in [4, 5] and j_ not in [5, 6, 7, 8]:
+    for j_, j in enumerate(list(range(1, 8))):
+        if i in [4, 5] and j_ not in [3, 4, 5, 6]:
             continue
         top_axes[i].append(fig.add_subplot(gs[i + 1, j]))
 
@@ -60,6 +84,7 @@ print(top_axes)
 
 def img_axis(ax):
     ax.axis("off")
+    # ax.set_ylabel("test")
 
 
 cyan_cmap = Colormap("cmap:cyan").to_mpl()
@@ -72,7 +97,7 @@ red_crop_position = [
 ]
 sizes_ylabel = ["50 µm", "100 µm", "200 µm", "400 µm"]
 time_cutoffs = [4, 5, 8, 8, 8, 60]
-distance_boundary_label = "Distance to biofilm boundary (µm)"
+distance_boundary_label = "Distance to\nbiofilm boundary (µm)"
 
 
 def make_square(x):
@@ -121,6 +146,7 @@ for i in range(len(snakemake.input.nd2_gfp)):
             color="white",
             box_alpha=0.0,
             scale_loc="top",
+            sep=1,
         )
         if j == 1:
             ax.add_artist(scalebar)
@@ -140,17 +166,19 @@ for i in range(len(snakemake.input.nd2_gfp)):
         ax.set_yticks([])
         ax.set_ylabel(f"~ {sizes_ylabel[i]}", color="black")
 
-    edt_file = snakemake.input.edt[i]
-    edt = make_square(imread(edt_file, key=0))
+    # edt_file = snakemake.input.edt[i]
+    # edt = make_square(imread(edt_file, key=0))
 
-    ax = top_axes[i][3]
-    cax = top_axes[i][4]
-    im = ax.imshow(edt, cmap="gray")
-    img_axis(ax)
-    # divider = make_axes_locatable(ax)
-    # cax = divider.append_axes("right", size="5%", pad=0.05)
-    cbar = plt.colorbar(im, cax=cax)
-    # cbar.ax.set_ylabel(distance_boundary_label)
+    # ax = top_axes[i][3]
+    # cax = top_axes[i][4]
+    # im = ax.imshow(edt, cmap="gray")
+    # img_axis(ax)
+    # # divider = make_axes_locatable(ax)
+    # # cax = divider.append_axes("right", size="5%", pad=0.05)
+    # cbar = plt.colorbar(im, cax=cax)
+    # # cbar.ax.set_ylabel(distance_boundary_label)
+    top_axes[i][1].sharey(top_axes[i][0])
+    top_axes[i][2].sharey(top_axes[i][0])
 
 for i in range(6):
     heatmap = np.load(snakemake.input.heatmaps[i])
@@ -172,26 +200,35 @@ for i in range(6):
     deriv = deriv[:, inds]
     x_deriv = x[inds]
 
-    ax = top_axes[i][5]
+    with open(snakemake.input.penetration_times[i]) as f:
+        start_stop = yaml.safe_load(f)
+    start_time = np.mean(start_stop["start"])
+    t = t - start_time
+    deriv_t = deriv_t - start_time
+
+    ax = top_axes[i][3]
     X, Y = np.meshgrid(t, x_heatmap)
 
     im = ax.pcolormesh(
         X, Y, heatmap.T, shading="nearest", cmap="inferno", rasterized=True
     )
-    ax.set_xlabel("Time (min)")
+    ax.set_xlabel("Time (min)", labelpad=xlabelpad)
     ax.set_facecolor("gray")
     if i < 4:
         ax.set_ylabel(distance_boundary_label)
 
-    cax = top_axes[i][8]
+    cax = top_axes[i][4]
     cbar = plt.colorbar(im, cax=cax)
-    cbar.ax.set_ylabel("TMP-FAST Intensity (a.u.)")
+    if i == 4:
+        cbar.ax.set_ylabel("pFAST Intensity (a.u.)")
+    else:
+        cbar.ax.set_ylabel("TMP-FAST Intensity (a.u.)")
     cbar.ax.set_yticks([])
 
-    ax = top_axes[i][6]
+    ax = top_axes[i][5]
     X, Y = np.meshgrid(deriv_t, x_deriv)
 
-    norm = TwoSlopeNorm(vcenter=0.0)
+    norm = CenteredNorm(vcenter=0.0)
     im = ax.pcolormesh(
         X,
         Y,
@@ -201,16 +238,20 @@ for i in range(6):
         norm=norm,
         rasterized=True,
     )
-    ax.set_xlabel("Time (min)")
+    ax.set_xlabel("Time (min)", labelpad=xlabelpad)
     ax.set_facecolor("gray")
 
-    cax = top_axes[i][7]
+    cax = top_axes[i][6]
     cbar = plt.colorbar(im, cax=cax)
     cbar.ax.set_ylabel("d Intensity/dt (a.u./s)")
 
-    if i < 4:
-        top_axes[i][5].sharey(top_axes[i][6])
-        top_axes[i][4].sharey(top_axes[i][6])
+    for j in [3, 5]:
+        ax = top_axes[i][j]
+        ax.invert_yaxis()
+        ylim = ax.get_ylim()
+        ax.set_ylim(ylim[0], 0)
+
+    top_axes[i][5].sharey(top_axes[i][3])
 
 # control_label_ax.set_ylabel(distance_boundary_label)
 # control_label_ax.yaxis.set_label_position("right")
@@ -222,9 +263,11 @@ for i in range(6):
 # )
 # new_distance_label = distance_boundary_label.replace(" biofilm ", " ")
 # top_axes[4][5].set_ylabel(new_distance_label)
-top_axes[4][5].set_ylabel(distance_boundary_label, y=-0.2)
+top_axes[4][3].set_ylabel(distance_boundary_label.replace("\n", " "), y=-0.2)
 # top_axes[5][5].set_ylabel("")
-fig.align_ylabels([top_axes[i][5] for i in range(6)])
+fig.align_ylabels([top_axes[i][3] for i in range(6)])
+fig.align_ylabels([top_axes[i][4] for i in range(6)])
+fig.align_ylabels([top_axes[i][6] for i in range(6)])
 # fig.align_ylabels([top_axes[i][5] for i in range(4)])
 # top_axes[3][4].set_ylabel(distance_boundary_label, clip_on=False, y=-1)
 
@@ -239,22 +282,19 @@ fig.align_ylabels([top_axes[i][5] for i in range(6)])
 # )
 
 for i, label in zip([4, 5], ["pFAST control", "HMBR control"]):
-    top_axes[i][5].set_title(label, loc="left")
-    # fig.text(
-    #     -0.25,
-    #     1.02,
-    #     label,
-    #     transform=top_axes[i][5].transAxes,
-    #     ha="left",
-    #     va="bottom",
-    # )
+    top_axes[i][3].set_title(label, loc="left", pad=3)
+# fig.text(
+#     -0.25,
+#     1.02,
+#     label,
+#     transform=top_axes[i][5].transAxes,
+#     ha="left",
+#     va="bottom",
+# )
 # img_axis(control_label_ax)
 
 
-xpos = 0.05
-ypos = 0.92
 ax = top_axes[0][0]
-ax.text(xpos, ypos, "mScarlet", transform=ax.transAxes, color="yellow")
 
 
 def add_xy_arrow(
@@ -263,8 +303,8 @@ def add_xy_arrow(
     yarr=0.04,
     dx=0.10,
     dy=0.10,
-    offset_x=0.07,
-    offset_y=0.09,
+    offset_x=0.10,
+    offset_y=0.125,
     head_width=0.03,
 ):
     ax.arrow(
@@ -306,71 +346,127 @@ def add_xy_arrow(
 
 
 add_xy_arrow(ax)
-ax = top_axes[0][1]
-ax.text(xpos, ypos, "TMP-FAST", transform=ax.transAxes, color="cyan")
-ax = top_axes[0][3]
-ax.text(xpos, ypos, "Distance", transform=ax.transAxes, color="white")
-add_xy_arrow(ax)
+# ax = top_axes[0][3]
+# ax.text(xpos, ypos, "Distance", transform=ax.transAxes, color="white")
+# add_xy_arrow(ax)
+
+xpos = 0.99
+ypos = 0.98
+top_axes[0][0].text(
+    xpos,
+    ypos,
+    "mScarlet",
+    transform=top_axes[0][0].transAxes,
+    color="yellow",
+    ha="right",
+    va="top",
+)
+top_axes[0][1].text(
+    xpos,
+    ypos,
+    "TMP-FAST",
+    transform=top_axes[0][1].transAxes,
+    color="cyan",
+    ha="right",
+    va="top",
+)
 
 for j, label in enumerate(["t = -5 min", "t = -5 min", "t = +8 min"]):
     ax = top_axes[0][j]
     if j != 0:
         ax.get_yaxis().set_visible(False)
     ax.set_xticks([])
-    ax.set_xlabel(label)
-    ax.xaxis.set_label_position("top")
+    # ax.set_xlabel(label)
+    # ax.xaxis.set_label_position("top")
+    ax.set_title(label, loc="left", pad=3)
 
 diameter_arrow_ax = fig.add_subplot(gs[1:5, 0])
-diameter_arrow_ax.annotate(
-    "",
-    (0.5, 0.01),
+diameter_arrow = ConnectionPatch(
     (0.5, 0.99),
-    xycoords=diameter_arrow_ax.transAxes,
-    textcoords=diameter_arrow_ax.transAxes,
-    arrowprops=dict(facecolor="black", shrink=0.05),
+    (0.5, 0.01),
+    coordsA=diameter_arrow_ax.transAxes,
+    coordsB=diameter_arrow_ax.transAxes,
+    arrowstyle="->",
+    color="black",
+    lw=1.6,
 )
-diameter_arrow_ax.set_ylabel("Biofilm diameter")
+fig.add_artist(diameter_arrow)
+diameter_arrow_ax.set_ylabel("Biofilm diameter", labelpad=1)
 diameter_arrow_ax.get_xaxis().set_visible(False)
 diameter_arrow_ax.set_yticks([])
 for i in ["top", "right", "left", "bottom"]:
     diameter_arrow_ax.spines[i].set_visible(False)
 
-ax = top_axes[0][5]
-x_start = -0.18
-offset_periphery = 0.02
-offset_center = 0.005
-periphery = -0.05
-center = 1.005
+ax = top_axes[0][3]
+x_start = -0.15
 arrow = ConnectionPatch(
-    (x_start, periphery + offset_periphery),
-    (x_start, center - offset_center),
+    (x_start, 1.0),
+    (x_start, 0.0),
     coordsA=ax.transAxes,
     coordsB=ax.transAxes,
     arrowstyle="->",
     color="black",
     annotation_clip=False,
-    lw=2,
+    lw=1.3,
 )
-fig.text(x_start, periphery, "Periphery", transform=ax.transAxes, va="top")
-fig.text(x_start, center, "Center", transform=ax.transAxes, va="bottom")
+fig.text(
+    x_start,
+    1.04,
+    "Periphery",
+    transform=ax.transAxes,
+    va="bottom",
+    ha="center",
+    # rotation=20,
+)
+fig.text(
+    x_start,
+    0.0,
+    "Center",
+    transform=ax.transAxes,
+    va="top",
+    ha="center",
+    # rotation=20,
+)
 fig.add_artist(arrow)
 
 
-subfigs = fig.add_subfigure(gs[5:, :6])
+# subfigs = fig.add_subfigure(gs[5:, :4])
+sub_gs = gs[5:, 1:4].subgridspec(1, 3, width_ratios=[1, 0.08, 1])
 
-ax = subfigs.add_subplot(1, 2, 1)
+
+def add_origin(ax):
+    ylim = ax.get_ylim()
+    xlim = ax.get_xlim()
+    ax.set_ylim(0, ylim[1])
+    ax.set_xlim(0, xlim[1])
+
+
+markersize = 2.5
+elinewidth = 1
+
+# ax = subfigs.add_subplot(1, 2, 1)
+ax = fig.add_subplot(sub_gs[0])
 df = pd.read_csv(snakemake.input.times)
-ax.errorbar(
-    2 * df["size"],
-    df["times"],
-    yerr=df["errors"],
-    marker="o",
-    ls="none",
-)
-ax.set_xlabel("Biofilm diameter (µm)")
-ax.set_ylabel("Penetration time (min)")
-x = df["size"]
-y = df["times"]
+HMBR_labels = [None, "HMBR control"]
+for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
+    tmp = df[df["category"] == cat]
+    ax.errorbar(
+        2 * tmp["size"],
+        tmp["times"],
+        yerr=tmp["errors"],
+        label=lbl,
+        marker="o",
+        ls="none",
+        markersize=markersize,
+        elinewidth=elinewidth,
+    )
+ax.set_xlabel("Biofilm diameter (µm)", labelpad=xlabelpad)
+ax.set_ylabel("Penetration time (min)", labelpad=xlabelpad)
+tmp = df[df["category"] == "normal"]
+x = tmp["size"]
+y = tmp["times"]
+
+add_origin(ax)
 
 
 def statistic(x):  # permute only `x`
@@ -386,20 +482,31 @@ ax.text(
     transform=ax.transAxes,
 )
 
-ax = subfigs.add_subplot(1, 2, 2)
+# ax = subfigs.add_subplot(1, 2, 2)
+ax = fig.add_subplot(sub_gs[-1])
 df = pd.read_csv(snakemake.input.slopes)
-ax.errorbar(
-    2 * df["size"],
-    df["speed"],
-    yerr=df["speed_err"],
-    marker="o",
-    ls="none",
-)
-ax.set_xlabel("Biofilm diameter (µm)")
-ax.set_ylabel("Penetration speed (µm/sec)")
+for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
+    tmp = df[df["category"] == cat]
+    ax.errorbar(
+        2 * tmp["size"],
+        tmp["speed"],
+        yerr=tmp["speed_err"],
+        marker="o",
+        ls="none",
+        markersize=markersize,
+        elinewidth=elinewidth,
+        label=lbl,
+    )
+ax.set_xlabel("Biofilm diameter (µm)", labelpad=xlabelpad)
+ax.set_ylabel("Penetration speed (µm/sec)", labelpad=xlabelpad)
+ax.set_title(" ", pad=3)
+ax.legend(loc=7)
 
-x = df["size"]
-y = df["speed"]
+add_origin(ax)
+
+tmp = df[df["category"] == "normal"]
+x = tmp["size"]
+y = tmp["speed"]
 
 
 def statistic(x):  # permute only `x`
@@ -416,6 +523,7 @@ ax.text(
     ha="right",
 )
 
+fig.get_layout_engine().set(w_pad=1 / 72, h_pad=1 / 72, hspace=0, wspace=0)
 
 fig.savefig(snakemake.output.png)
 fig.savefig(snakemake.output.svg, dpi=300)

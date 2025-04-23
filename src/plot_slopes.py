@@ -8,6 +8,7 @@ import pandas as pd
 slopes = []
 errors = []
 size = []
+category = []
 
 for y in snakemake.input.yamls:
     with open(y) as f:
@@ -17,6 +18,7 @@ for y in snakemake.input.yamls:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("normal")
 
 start_HMBR = len(slopes)
 end_HMBR = start_HMBR + len(snakemake.input.HMBR)
@@ -26,6 +28,7 @@ for y in snakemake.input.HMBR:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("HMBR")
 
 start_pH6 = len(slopes)
 end_pH6 = start_pH6 + len(snakemake.input.pH6)
@@ -35,6 +38,7 @@ for y in snakemake.input.pH6:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("pH 6")
 
 start_pH8 = len(slopes)
 end_pH8 = start_pH8 + len(snakemake.input.pH8)
@@ -44,6 +48,7 @@ for y in snakemake.input.pH8:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("pH 8")
 
 start_pH85 = len(slopes)
 end_pH85 = start_pH85 + len(snakemake.input.pH85)
@@ -53,6 +58,7 @@ for y in snakemake.input.pH85:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("pH 8.5")
 
 start_GFP = len(slopes)
 end_GFP = start_GFP + len(snakemake.input.GFP)
@@ -62,6 +68,7 @@ for y in snakemake.input.GFP:
         slopes.append(tmp["slope"])
         errors.append(tmp["slope_err"])
         size.append(tmp["max_dist"])
+        category.append("GFP")
 
 
 slopes = np.array(slopes) * 60
@@ -119,11 +126,12 @@ fig.savefig(snakemake.output.png)
 
 df = pd.DataFrame(
     {
-        "slopes": slopes[:-2],
-        "errors": errors[:-2],
-        "size": size[:-2],
-        "speed": speeds[:-2],
-        "speed_err": speed_err[:-2],
+        "slopes": slopes,
+        "errors": errors,
+        "size": size,
+        "speed": speeds,
+        "speed_err": speed_err,
+        "category": category,
     }
 )
 df.to_csv(snakemake.output.csv)

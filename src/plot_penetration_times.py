@@ -7,6 +7,7 @@ import pandas as pd
 times = []
 errors = []
 size = []
+category = []
 
 for y in snakemake.input.yamls:
     with open(y) as f:
@@ -14,12 +15,14 @@ for y in snakemake.input.yamls:
         times.append(tmp["time in min"])
         errors.append(tmp["time err"])
         size.append(tmp["max_dist"])
+        category.append("normal")
 for y in snakemake.input.HMBR:
     with open(y) as f:
         tmp = yaml.safe_load(f)
         times.append(tmp["time in min"])
         errors.append(tmp["time err"])
         size.append(tmp["max_dist"])
+        category.append("HMBR")
 
 fig, axes = plt.subplots(1, 1, figsize=[6, 5])
 
@@ -47,9 +50,10 @@ fig.savefig(snakemake.output.png)
 
 df = pd.DataFrame(
     {
-        "times": times[:-2],
-        "errors": errors[:-2],
-        "size": size[:-2],
+        "times": times,
+        "errors": errors,
+        "size": size,
+        "category": category,
     }
 )
 df.to_csv(snakemake.output.csv)

@@ -193,7 +193,7 @@ rule figure:
                 "TMP-FAST_400_3_mScarlet",
             ],
         ),
-        edt=expand("data/raw/{file}_edt.tif", file=files),
+        # edt=expand("data/raw/{file}_edt.tif", file=files),
         heatmaps=expand("data/processed/nd2/{file}/i_mean.npy",
                         file=files+additional_files),
         derivs=expand("data/processed/nd2/{file}/deriv_mean.npy",
@@ -204,6 +204,10 @@ rule figure:
         xs=expand("data/processed/nd2/{file}/x.npy", file=files+additional_files),
         slopes=rules.gather_slopes.output.csv,
         times=rules.gather_penetration.output.csv,
+        penetration_times=expand(
+            "data/raw/{file}_penetration_time.yaml",
+            file=files+additional_files,
+        ),
         script="src/figure.py",
     conda: "../envs/plotting.yaml"
     script: "../../src/figure.py"
