@@ -122,9 +122,7 @@ for i in range(len(snakemake.input.nd2_gfp)):
 
         times = []
         for j in range(nd2_file.metadata.contents.frameCount):
-            times.append(
-                nd2_file.frame_metadata(j).channels[0].time.relativeTimeMs
-            )
+            times.append(nd2_file.frame_metadata(j).channels[0].time.relativeTimeMs)
         exp_times = np.array(times) / 1000 / 60
         gfp_time = np.argwhere(exp_times < 8).max()
 
@@ -202,9 +200,9 @@ for i in range(6):
 
     with open(snakemake.input.penetration_times[i]) as f:
         start_stop = yaml.safe_load(f)
-    start_time = np.mean(start_stop["start"])
-    t = t - start_time
-    deriv_t = deriv_t - start_time
+    # start_time = np.mean(start_stop["start"])
+    # t = t - start_time
+    # deriv_t = deriv_t - start_time
 
     ax = top_axes[i][3]
     X, Y = np.meshgrid(t, x_heatmap)
@@ -216,6 +214,22 @@ for i in range(6):
     ax.set_facecolor("gray")
     if i < 4:
         ax.set_ylabel(distance_boundary_label)
+
+    # add 0 number
+    xticks = ax.get_xticks()
+    xticks_labels = ax.get_xticklabels()
+    print(xticks, xticks_labels)
+
+    # ax.set_xticks(
+    #     [
+    #         0,
+    #     ]
+    #     + xticks,
+    #     labels=[
+    #         "0",
+    #     ]
+    #     + xticks_labels,
+    # )
 
     cax = top_axes[i][4]
     cbar = plt.colorbar(im, cax=cax)
@@ -447,24 +461,24 @@ elinewidth = 1
 # ax = subfigs.add_subplot(1, 2, 1)
 ax = fig.add_subplot(sub_gs[0])
 df = pd.read_csv(snakemake.input.times)
-HMBR_labels = [None, "HMBR control"]
-for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
-    tmp = df[df["category"] == cat]
-    ax.errorbar(
-        2 * tmp["size"],
-        tmp["times"],
-        yerr=tmp["errors"],
-        label=lbl,
-        marker="o",
-        ls="none",
-        markersize=markersize,
-        elinewidth=elinewidth,
-    )
+# HMBR_labels = [None, "HMBR control"]
+# for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
+# tmp = df[df["category"] == cat]
+ax.errorbar(
+    2 * df["size"],
+    df["times"],
+    yerr=df["errors"],
+    # label=lbl,
+    marker="o",
+    ls="none",
+    markersize=markersize,
+    elinewidth=elinewidth,
+)
 ax.set_xlabel("Biofilm diameter (µm)", labelpad=xlabelpad)
-ax.set_ylabel("Penetration time (min)", labelpad=xlabelpad)
-tmp = df[df["category"] == "normal"]
-x = tmp["size"]
-y = tmp["times"]
+ax.set_ylabel("Time delay (min)", labelpad=xlabelpad)
+# tmp = df[df["category"] == "normal"]
+x = df["size"]
+y = df["times"]
 
 add_origin(ax)
 
@@ -484,29 +498,28 @@ ax.text(
 
 # ax = subfigs.add_subplot(1, 2, 2)
 ax = fig.add_subplot(sub_gs[-1])
-df = pd.read_csv(snakemake.input.slopes)
-for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
-    tmp = df[df["category"] == cat]
-    ax.errorbar(
-        2 * tmp["size"],
-        tmp["speed"],
-        yerr=tmp["speed_err"],
-        marker="o",
-        ls="none",
-        markersize=markersize,
-        elinewidth=elinewidth,
-        label=lbl,
-    )
+# df = pd.read_csv(snakemake.input.slopes)
+# for lbl, cat in zip(HMBR_labels, ["normal", "HMBR"]):
+# tmp = df[df["category"] == cat]
+ax.errorbar(
+    2 * df["size"],
+    df["times penetration"],
+    yerr=df["errors penetration"],
+    marker="o",
+    ls="none",
+    markersize=markersize,
+    elinewidth=elinewidth,
+)
 ax.set_xlabel("Biofilm diameter (µm)", labelpad=xlabelpad)
-ax.set_ylabel("Penetration speed (µm/sec)", labelpad=xlabelpad)
+ax.set_ylabel("Penetration time (min)", labelpad=xlabelpad)
 ax.set_title(" ", pad=3)
-ax.legend(loc=7)
+# ax.legend(loc=7)
 
 add_origin(ax)
 
-tmp = df[df["category"] == "normal"]
-x = tmp["size"]
-y = tmp["speed"]
+# tmp = df[df["category"] == "normal"]
+x = df["size"]
+y = df["times penetration"]
 
 
 def statistic(x):  # permute only `x`
@@ -516,14 +529,23 @@ def statistic(x):  # permute only `x`
 res_exact = stats.permutation_test((x,), statistic, permutation_type="pairings")
 print(res_exact)
 ax.text(
-    0.95,
+    0.05,
     0.9,
     f"Spearman p-value: {res_exact.pvalue}",
     transform=ax.transAxes,
-    ha="right",
+    # ha="right",
 )
 
 fig.get_layout_engine().set(w_pad=1 / 72, h_pad=1 / 72, hspace=0, wspace=0)
+
+for i in range(6):
+    ax = top_axes[i][3]
+    print(ax.get_xticks())
+    print(ax.get_xticklabels())
+    print(ax.get_xlim())
+
+    xlim = ax.get_xlim()
+    ax.set_xlim(0.0, xlim[1])
 
 fig.savefig(snakemake.output.png)
 fig.savefig(snakemake.output.svg, dpi=300)

@@ -69,10 +69,27 @@ rule slope:
     conda: "../envs/plotting.yaml"
     script: "../../src/slope.py"
 
+rule penetration_time_new:
+    input:
+        # heatmap=rules.edt_analysis_heatmap_calculation.output.deriv_mean,
+        # time=rules.edt_analysis_heatmap_calculation.output.deriv_time,
+        heatmap=rules.edt_analysis_heatmap_calculation.output.i_mean,
+        time=rules.edt_analysis_heatmap_calculation.output.exp_times,
+        x=rules.edt_analysis_heatmap_calculation.output.x,
+        # yaml="data/raw/{file}_penetration_time.yaml",
+        script="src/penetration_time_new.py",
+    output:
+        yaml="data/processed/nd2/{file}/penetration_time_new.yaml",
+        png="data/raw/{file}_penetration_time_new.png",
+    conda: "../envs/plotting.yaml"
+    script: "../../src/penetration_time_new.py"
+
 rule penetration_time:
     input:
         heatmap=rules.edt_analysis_heatmap_calculation.output.deriv_mean,
         time=rules.edt_analysis_heatmap_calculation.output.deriv_time,
+        # heatmap=rules.edt_analysis_heatmap_calculation.output.i_mean,
+        # time=rules.edt_analysis_heatmap_calculation.output.exp_times,
         x=rules.edt_analysis_heatmap_calculation.output.x,
         yaml="data/raw/{file}_penetration_time.yaml",
         script="src/penetration_time.py",
@@ -142,13 +159,13 @@ rule gather_slopes:
 def gather_penetration_input(wildcards):
     files = glob("data/raw/*nd2")
     path = "data/processed/nd2"
-    return [os.path.join(path, Path(f).stem + "/penetration_time.yaml") for f in files if passes(f)]
+    return [os.path.join(path, Path(f).stem + "/penetration_time_new.yaml") for f in files if passes(f)]
 rule gather_penetration:
     input:
         yamls=gather_penetration_input,
         script="src/plot_penetration_times.py",
         HMBR=expand(
-            "data/processed/nd2/{file}/penetration_time.yaml",
+            "data/processed/nd2/{file}/penetration_time_new.yaml",
             file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
         ),
     output:
@@ -160,7 +177,7 @@ rule gather_penetration:
 def gather_input(wildcards):
     files = glob("data/raw/*nd2")
     return [f.replace(".nd2", "_slope.png") for f in files] + [
-        f.replace(".nd2", "_penetration_time.png") for f in files
+        f.replace(".nd2", "_penetration_time_new.png") for f in files
     ]
 rule gather:
     input:

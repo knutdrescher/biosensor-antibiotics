@@ -42,6 +42,14 @@ for i in range(2):
     ax.axvline(start_stop["start"][i], color="green")
     ax.axvline(start_stop["stop"][i], color="red")
 
+ax = axes[1]
+
+ax.plot(time, t_max)
+
+for i in range(2):
+    ax.axvline(start_stop["start"][i], color="green")
+    ax.axvline(start_stop["stop"][i], color="red")
+
 fig.savefig(snakemake.output.png)
 
 start = np.mean(start_stop["start"])
