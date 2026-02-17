@@ -28,11 +28,11 @@ Version 0.1.0
 
 ```
 
-Please use symbolic links to point `data/raw` towards the downloaded raw data or create the folder `data/raw` and download the raw data into it.
+Please use symbolic links to point `data/raw` towards the downloaded nd2 files from Fig3.zip or create the folder `data/raw` and copy the nd2 files from Fig3.zip into it.
 
 ### Data repository
 
-The raw data is available under [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
+The raw available under [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
 
 ## License
 
