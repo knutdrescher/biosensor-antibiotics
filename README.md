@@ -30,9 +30,17 @@ Version 0.1.0
 
 ```
 
-Please use symbolic links to point `data/raw` towards the downloaded nd2 files from Fig3.zip or create the folder `data/raw` and copy the nd2 files from Fig3.zip into it.
+### Code
 
-### Data repository
+Fig. 2c and Fig. 2d were calculated and plotted with `notebooks/2025-04-01-triton-macrophage-experiments.ipynb`.
+
+Fig. 3f and Fig. 3g were computed and plotted with the snakemake workflow present under `workflow/rules/analysis.smk`. The python scripts under `src` belong to this workflow.
+
+Fig. 4h was analyzed and plotted with `notebooks/2025-12-22-inverted-bladder-model.ipynb`.
+
+### Data
+
+Please use symbolic links to point `data/raw` towards the downloaded nd2 files from Fig3.zip or create the folder `data/raw` and copy the nd2 files from Fig3.zip into it.
 
 The raw available under [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
 
