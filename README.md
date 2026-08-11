@@ -36,7 +36,7 @@ Fig. 2c and Fig. 2d were calculated and plotted with `notebooks/2025-04-01-trito
 
 Fig. 3f and Fig. 3g were computed and plotted with the snakemake workflow present under `workflow/rules/analysis.smk`. The python scripts under `src` belong to this workflow.
 
-Fig. 4h was analyzed and plotted with `notebooks/2025-12-22-inverted-bladder-model.ipynb`.
+Fig. 4h was analyzed and plotted with `notebooks/2025-12-22-inverted-bladder-model.ipynb`. The supplementary figure including more results on the inverted bladder model was generated with the notebooks in `notebooks\inverted-bladder-model`.
 
 ### Data
 
