@@ -1,9 +1,11 @@
 # exclude compiled binaries and external models
+/results
 /bin
 
 # exclude data from source control by default
 /data/temp
 /data/processed
+/data/preprocessed
 /data/raw
 # also exclude logs
 /logs

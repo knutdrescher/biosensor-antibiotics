@@ -1,0 +1,10 @@
+name: fig2
+dependencies:
+  - python=3.12.0
+  - pandas=3.1.0
+  - matplotlib=3.11.2
+  - seaborn=0.13.2
+  - pip=26.2.2
+  - pip:
+    - statannotations==0.7.2
+    - openpyxl==3.1.5
