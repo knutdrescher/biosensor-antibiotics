@@ -10,24 +10,23 @@ bioRxiv 2026.02.05.704027; doi: [https://doi.org/10.64898/2026.02.05.704027](htt
 
 Version 0.1.0
 
-# Instructions to reproduce data
+# Instructions to reproduce figures
 
-0. Install `snakemake` on your system. See system requirements.
-1. Clone this repository.
-2. Copy the raw data from [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
+1. Install `snakemake` and `conda` on your system. See system requirements.
+2. Clone this repository.
+3. Copy the raw data from [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
     1. Copy the contents of `Fig3.zip` to `data/raw/fig3`, do the same for `Fig4.zip` and `SuppFig8.zip`.
     2. Copy the contents of `Fig4_lbl.zip` to `data/preprocessed/fig4`, do the same for `SuppFig8_lbl.zip`.
     3. Copy the file `Fig.2_c_d.xlsx` into `data/preprocessed`.
-3. Run the following commands to create figures
-    ```
+4. Run the following commands to create figures
+    ```shell
     snakemake --use-conda fig2 -j1  # for panels of figure 2
     ```
 
 ## System requirements
 
 The software requires python and several python dependencies. These are organized via
-`conda` and `snakemake`. Please install this software. `conda` can be installed via
-[https://continuumio-docs.readthedocs-hosted.com/miniconda/install/](miniconda).
+`conda` and `snakemake`. Please install this software. `conda` can be installed via [miniforge](https://github.com/conda-forge/miniforge#install) (recommended) or [miniconda](https://continuumio-docs.readthedocs-hosted.com/miniconda/install/).
 For `snakemake` follow
 [https://snakemake.readthedocs.io/en/stable/getting_started/installation.html](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
