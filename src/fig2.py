@@ -4,8 +4,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from matplotlib import font_manager
-from snakemake.script import snakemake
 from statannotations.Annotator import Annotator
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    from snakemake.iocontainers import snakemake
 
 plt.rcParams.update(
     {
