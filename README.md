@@ -10,6 +10,17 @@ bioRxiv 2026.02.05.704027; doi: [https://doi.org/10.64898/2026.02.05.704027](htt
 
 Version 0.1.0
 
+# Instructions to reproduce data
+
+1. Clone this repository.
+
+2. Copy the raw data from [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
+  1. Copy the contents of `Fig3.zip` to `data/raw/fig3`, do the same for `Fig4.zip` and `SuppFig8.zip`.
+  2. Copy the contents of `Fig4_lbl.zip` to `data/preprocessed/fig4`, do the same for `SuppFig8_lbl.zip`.
+  3. Copy the file `Fig.2_c_d.xlsx` into `data/preprocessed`.
+
+3. 
+
 ## Project organization
 
 ```
@@ -20,13 +31,20 @@ Version 0.1.0
 ├── README.md
 ├── Snakefile
 ├── workflow           <- Snakemake workflow
-│   ├── rules          <- Additional rules for Snakemake (HW)
-│   └── envs           <- Conda environment yaml files for Snakemake (HW)
+│   ├── rules          <- Rules for Snakemake 
+│   └── envs           <- Conda environment yaml files for Snakemake
 ├── data               <- All project data, ignored by git
-│   ├── processed      <- The final, canonical data sets for modeling. (PG)
-│   └── raw            <- The original, immutable data dump. (RO)
-├── notebooks          <- Jupyter notebooks for prototyping
-└── src                <- Source code for this project (HW)
+│   ├── processed      <- Intermediate files
+│   ├── preprocessed   <- Intermediate files that are externally supplied
+│   │   ├── fig4       <- Label data for Fig. 4
+│   │   └── suppfig8   <- Label data for Supp. Fig. 8
+│   └── raw            <- The original, immutable data dump
+│       ├── fig3       <- Raw files for Fig. 3
+│       ├── fig4       <- Raw files for Fig. 4
+│       └── suppfig8   <- Raw files for Supp. Fig. 8
+├── results            <- Output files and figures
+├── notebooks          <- Preliminary notebooks
+└── src                <- Source code
 
 ```
 
@@ -40,9 +58,7 @@ Fig. 4h was analyzed and plotted with `notebooks/2025-12-22-inverted-bladder-mod
 
 ### Data
 
-Please use symbolic links to point `data/raw` towards the downloaded nd2 files from Fig3.zip or create the folder `data/raw` and copy the nd2 files from Fig3.zip into it.
-
-The raw available under [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
+The raw data is available under [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
 
 ## License
 

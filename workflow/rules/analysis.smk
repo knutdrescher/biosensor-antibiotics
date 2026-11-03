@@ -5,10 +5,10 @@ from pathlib import Path
 
 rule segmentation:
     input:
-        nd2="data/raw/{file}.nd2",
+        nd2="data/raw/fig3/{file}.nd2",
         script="src/segmentation.py",
     output:
-        lbl="data/raw/{file}_lbl.tif",
+        lbl="data/raw/fig3/{file}_lbl.tif",
     conda: "../envs/image-analysis.yaml"
     script: "../../src/segmentation.py"
 
@@ -16,7 +16,7 @@ def lbl_input_func(wildcards):
     file = wildcards.file
     auto = f"{file}_lbl.tif"
     manual = f"{file}_manual-lbl.tif"
-    path = "data/raw"
+    path = "data/raw/fig3"
     auto = os.path.join(path, auto)
     manual = os.path.join(path, manual)
     if Path(manual).exists():
@@ -53,7 +53,7 @@ rule plot_qc_heatmap:
         x=rules.edt_analysis_heatmap_calculation.output.x,
         script="src/plot_qc_heatmap.py",
     output:
-        png="data/raw/{file}_qc.png",
+        png="data/results/fig3/{file}_qc.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_qc_heatmap.py"
 
@@ -65,7 +65,7 @@ rule slope:
         script="src/slope.py",
     output:
         yaml="data/processed/nd2/{file}/slope.yaml",
-        png="data/raw/{file}_slope.png",
+        png="data/results/fig3/{file}_slope.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/slope.py"
 
@@ -80,7 +80,7 @@ rule penetration_time_new:
         script="src/penetration_time_new.py",
     output:
         yaml="data/processed/nd2/{file}/penetration_time_new.yaml",
-        png="data/raw/{file}_penetration_time_new.png",
+        png="data/results/fig3/{file}_penetration_time_new.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/penetration_time_new.py"
 
@@ -95,7 +95,7 @@ rule penetration_time:
         script="src/penetration_time.py",
     output:
         yaml="data/processed/nd2/{file}/penetration_time.yaml",
-        png="data/raw/{file}_penetration_time.png",
+        png="data/results/fig3/{file}_penetration_time.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/penetration_time.py"
 
@@ -112,7 +112,7 @@ def passes(f):
     return True
 
 def gather_slopes_input(wildcards):
-    files = glob("data/raw/*nd2")
+    files = glob("data/raw/fig3/*nd2")
     path = "data/processed/nd2"
     return [os.path.join(path, Path(f).stem + "/slope.yaml") for f in files if passes(f)]
 rule gather_slopes:
@@ -152,12 +152,12 @@ rule gather_slopes:
         script="src/plot_slopes.py",
     output:
         csv="data/processed/slopes.csv",
-        png="data/raw/figure/slopes.png",
+        png="data/results/fig3/slopes.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_slopes.py"
 
 def gather_penetration_input(wildcards):
-    files = glob("data/raw/*nd2")
+    files = glob("data/raw/fig3/*nd2")
     path = "data/processed/nd2"
     return [os.path.join(path, Path(f).stem + "/penetration_time_new.yaml") for f in files if passes(f)]
 rule gather_penetration:
@@ -170,7 +170,7 @@ rule gather_penetration:
         ),
     output:
         csv="data/processed/penetration_times.csv",
-        png="data/raw/figure/penetration_times.png",
+        png="data/results/fig3/penetration_times.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_penetration_times.py"
 
