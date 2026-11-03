@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from contextlib import redirect_stdout
 
 import matplotlib.pyplot as plt
@@ -9,7 +10,8 @@ from statannotations.Annotator import Annotator
 try:
     from snakemake.script import snakemake
 except ImportError:
-    from snakemake.iocontainers import snakemake
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake
 
 plt.rcParams.update(
     {
