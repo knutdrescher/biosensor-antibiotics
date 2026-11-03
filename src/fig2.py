@@ -1,5 +1,5 @@
-from typing import TYPE_CHECKING
 from contextlib import redirect_stdout
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,7 +11,7 @@ try:
     from snakemake.script import snakemake
 except ImportError:
     if TYPE_CHECKING:
-        from snakemake.iocontainers import snakemake
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 plt.rcParams.update(
     {
