@@ -82,7 +82,6 @@ has less than 32 GB of RAM, use `-j1` or `-j2` in all the commands.
 │       ├── fig4       <- Raw files for Fig. 4
 │       └── suppfig8   <- Raw files for Supp. Fig. 8
 ├── results            <- Output files and figures
-├── notebooks          <- Preliminary notebooks (legacy)
 └── src                <- Source code
 
 ```
