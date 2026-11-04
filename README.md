@@ -39,7 +39,7 @@ The software requires python and several python dependencies (see `workflow/envs
 For `snakemake` follow
 [https://snakemake.readthedocs.io/en/stable/getting_started/installation.html](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
-The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubuntu 22.04.1 LTS` on WSL2 and with `conda==` and `snakemake==` on Windows 11.
+The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubuntu 22.04.1 LTS` on WSL2 and with `conda==26.9.4` and `snakemake==9.27.1` on Windows 11.
 
 ## Project organization
 
