@@ -26,13 +26,13 @@ The software in this repository produces the panels Fig. 2c, Fig. 2d, Fig. 3f, F
     # less than 5 minutes, including automatic installation of additional packages
     snakemake --use-conda fig2 -j1  
 
-    # for panel h of figure 4
-    # ~20 minutes, including automatic installation of additional packages
-    snakemake --use-conda fig4 -j3  
-
     # for panels e, f, g of figure 3
     # ~10 minutes, including automatic installation of additional packages
     snakemake --use-conda fig3 -j14  # use -j1 or -j2 if your PC is overloaded
+
+    # for panel h of figure 4
+    # ~20 minutes, including automatic installation of additional packages
+    snakemake --use-conda fig4 -j3  
     ```
 5. Have a look at the outputs in `results` folder.
 
