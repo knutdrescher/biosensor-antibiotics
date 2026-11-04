@@ -1,19 +1,21 @@
-import matplotlib
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import nd2
-import yaml
-import pandas as pd
 import numpy as np
-from snakemake.script import snakemake
+import pandas as pd
+import yaml
 from cmap import Colormap
-from matplotlib_scalebar.scalebar import ScaleBar
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import Normalize, TwoSlopeNorm, CenteredNorm
-from tifffile import imread
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.colors import CenteredNorm
 from matplotlib.patches import ConnectionPatch
+from matplotlib_scalebar.scalebar import ScaleBar
 from scipy import stats
-from matplotlib.transforms import blended_transform_factory
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 fontsize = 5
 ticksize = 2
@@ -126,8 +128,8 @@ for i in range(len(snakemake.input.nd2_gfp)):
         exp_times = np.array(times) / 1000 / 60
         gfp_time = np.argwhere(exp_times < 8).max()
 
-        img0 = make_square(dask[0, 0, ...].compute())
-        img1 = make_square(dask[gfp_time, 0, ...].compute())
+        img0 = make_square(dask[0, ...].compute())
+        img1 = make_square(dask[gfp_time, ...].compute())
         pixel_size = nd2_file.metadata.channels[0].volume.axesCalibration[0]
         imgs = [img0, img1]
         vmin = min(img.min() for img in imgs)
@@ -151,18 +153,30 @@ for i in range(len(snakemake.input.nd2_gfp)):
         if i != 0:
             img_axis(ax)
 
-    with nd2.ND2File(snakemake.input.nd2_red[i]) as nd2_red:
-        y, x = red_crop_position[i]
-        sly = slice(y, y + imgs[0].shape[0])
-        slx = slice(x, x + imgs[0].shape[1])
-        red_img = make_square(nd2_red.asarray()[1, sly, slx])
-        ax = top_axes[i][0]
-        ax.imshow(red_img, cmap=yellow_cmap)
-        # img_axis(ax)
-        if i != 0:
-            ax.get_xaxis().set_visible(False)
-        ax.set_yticks([])
-        ax.set_ylabel(f"~ {sizes_ylabel[i]}", color="black")
+    skip = False
+    if i == 0:
+        red_i = 0
+    elif i == 3:
+        red_i = 1
+    else:
+        skip = True
+    if not skip:
+        with nd2.ND2File(snakemake.input.nd2_red[red_i]) as nd2_red:
+            y, x = red_crop_position[i]
+            sly = slice(y, y + imgs[0].shape[0])
+            slx = slice(x, x + imgs[0].shape[1])
+            if red_i == 0:
+                red_img = make_square(nd2_red.asarray()[sly, slx])
+            else:
+                red_img = make_square(nd2_red.asarray()[1, sly, slx])
+            print("hiere", red_img.shape)
+            ax = top_axes[i][0]
+            ax.imshow(red_img, cmap=yellow_cmap)
+            # img_axis(ax)
+            if i != 0:
+                ax.get_xaxis().set_visible(False)
+            ax.set_yticks([])
+            ax.set_ylabel(f"~ {sizes_ylabel[i]}", color="black")
 
     # edt_file = snakemake.input.edt[i]
     # edt = make_square(imread(edt_file, key=0))
@@ -178,7 +192,7 @@ for i in range(len(snakemake.input.nd2_gfp)):
     top_axes[i][1].sharey(top_axes[i][0])
     top_axes[i][2].sharey(top_axes[i][0])
 
-for i in range(6):
+for i in range(4):
     heatmap = np.load(snakemake.input.heatmaps[i])
     deriv = np.load(snakemake.input.derivs[i])
     x = np.load(snakemake.input.xs[i])

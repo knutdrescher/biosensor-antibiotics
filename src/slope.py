@@ -1,8 +1,15 @@
-import yaml
-from snakemake.script import snakemake
-import numpy as np
-from scipy.stats import linregress
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+from scipy.stats import linregress
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 heatmap = np.load(snakemake.input.heatmap)
 time = np.load(snakemake.input.time)

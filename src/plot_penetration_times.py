@@ -1,9 +1,8 @@
-from snakemake.script import snakemake
-import yaml
 import matplotlib.pyplot as plt
 import pandas as pd
+import yaml
 from scipy.stats import spearmanr
-
+from snakemake.script import snakemake
 
 times = ([], [])
 errors = ([], [])

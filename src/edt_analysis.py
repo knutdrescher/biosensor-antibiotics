@@ -1,14 +1,19 @@
-import nd2
-import pandas as pd
-from tifffile import imread, imwrite
+from typing import TYPE_CHECKING
 
-from edt import edt
+import nd2
 import numpy as np
-from snakemake.script import snakemake
+import pandas as pd
+from edt import edt
+from tifffile import imread, imwrite
 from tqdm import trange
 
-from helpers import time_col, gfp_col, dist_um_col, END_TIME_CUTOFF
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
+from helpers import END_TIME_CUTOFF, dist_um_col, gfp_col, time_col
 
 lbl = imread(snakemake.input.lbl).astype(bool)
 
@@ -35,7 +40,7 @@ distances = np.empty_like(lbl, dtype=float)
 dfs = []
 
 for i in trange(distances.shape[0]):
-    gfp = dask[i, 0, ...].compute()
+    gfp = dask[i, ...].compute()
 
     tmp = lbl[i]
     distances[i] = edt(tmp)

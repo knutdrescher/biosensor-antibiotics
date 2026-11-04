@@ -1,8 +1,14 @@
-import yaml
-from snakemake.script import snakemake
-import numpy as np
-import matplotlib.pyplot as plt
+from typing import TYPE_CHECKING
 
+import matplotlib.pyplot as plt
+import numpy as np
+import yaml
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 SMOOTHING_N = 10
 

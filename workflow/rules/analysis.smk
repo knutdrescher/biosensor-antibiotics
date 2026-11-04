@@ -8,7 +8,7 @@ rule segmentation:
         nd2="data/raw/fig3/{file}.nd2",
         script="src/segmentation.py",
     output:
-        lbl="data/raw/fig3/{file}_lbl.tif",
+        lbl="data/processed/fig3/{file}_lbl.tif",
     conda: "../envs/image-analysis.yaml"
     script: "../../src/segmentation.py"
 
@@ -16,7 +16,7 @@ def lbl_input_func(wildcards):
     file = wildcards.file
     auto = f"{file}_lbl.tif"
     manual = f"{file}_manual-lbl.tif"
-    path = "data/raw/fig3"
+    path = "data/processed/fig3"
     auto = os.path.join(path, auto)
     manual = os.path.join(path, manual)
     if Path(manual).exists():
@@ -91,7 +91,7 @@ rule penetration_time:
         # heatmap=rules.edt_analysis_heatmap_calculation.output.i_mean,
         # time=rules.edt_analysis_heatmap_calculation.output.exp_times,
         x=rules.edt_analysis_heatmap_calculation.output.x,
-        yaml="data/raw/{file}_penetration_time.yaml",
+        yaml="data/preprocessed/fig3/{file}_penetration_time.yaml",
         script="src/penetration_time.py",
     output:
         yaml="data/processed/nd2/{file}/penetration_time.yaml",
@@ -107,9 +107,10 @@ def passes(f):
         "TMP-FAST_600_4", "TMP-FAST_500_1"
     ]:
         return False
-    elif "HMBR" in name or "pH" in name or "GFP" in name:
+    elif "HMBR" in name or "pH" in name or "GFP" in name or "mScarlet" in name:
         return False
     return True
+
 
 def gather_slopes_input(wildcards):
     files = glob("data/raw/fig3/*nd2")
@@ -118,37 +119,37 @@ def gather_slopes_input(wildcards):
 rule gather_slopes:
     input:
         yamls=gather_slopes_input,
-        HMBR=expand(
-            "data/processed/nd2/{file}/slope.yaml",
-            file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
-        ),
-        pH6=expand(
-            "data/processed/nd2/{file}/slope.yaml",
-            file=[
-                "TMP-FAST_2_pH6.0_TMP",
-                "TMP-FAST_3_pH6.0_TMP",
-            ],
-        ),
-        pH8=expand(
-            "data/processed/nd2/{file}/slope.yaml",
-            file=[
-                "TMP-FAST_4_pH8.0_TMP",
-                "TMP-FAST_5_pH8.0_TMP",
-            ],
-        ),
-        pH85=expand(
-            "data/processed/nd2/{file}/slope.yaml",
-            file=[
-                "TMP-FAST 1 pH8.5 TMP",
-                "TMP-FAST 2 pH8.5",
-            ],
-        ),
-        GFP=expand(
-            "data/processed/nd2/{file}/slope.yaml",
-            file=[
-                "TMP-GFP 1 488",
-            ],
-        ),
+        # HMBR=expand(
+        #     "data/processed/nd2/{file}/slope.yaml",
+        #     file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
+        # ),
+        # pH6=expand(
+        #     "data/processed/nd2/{file}/slope.yaml",
+        #     file=[
+        #         "TMP-FAST_2_pH6.0_TMP",
+        #         "TMP-FAST_3_pH6.0_TMP",
+        #     ],
+        # ),
+        # pH8=expand(
+        #     "data/processed/nd2/{file}/slope.yaml",
+        #     file=[
+        #         "TMP-FAST_4_pH8.0_TMP",
+        #         "TMP-FAST_5_pH8.0_TMP",
+        #     ],
+        # ),
+        # pH85=expand(
+        #     "data/processed/nd2/{file}/slope.yaml",
+        #     file=[
+        #         "TMP-FAST 1 pH8.5 TMP",
+        #         "TMP-FAST 2 pH8.5",
+        #     ],
+        # ),
+        # GFP=expand(
+        #     "data/processed/nd2/{file}/slope.yaml",
+        #     file=[
+        #         "TMP-GFP 1 488",
+        #     ],
+        # ),
         script="src/plot_slopes.py",
     output:
         csv="data/processed/slopes.csv",
@@ -164,10 +165,10 @@ rule gather_penetration:
     input:
         yamls=gather_penetration_input,
         script="src/plot_penetration_times.py",
-        HMBR=expand(
-            "data/processed/nd2/{file}/penetration_time_new.yaml",
-            file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
-        ),
+        # HMBR=expand(
+        #     "data/processed/nd2/{file}/penetration_time_new.yaml",
+        #     file=["TMP-FAST_400_control_HMBR_3", "TMP-FAST_300_control_HMBR_1"],
+        # ),
     output:
         csv="data/processed/penetration_times.csv",
         png="data/results/fig3/penetration_times.png",
@@ -175,7 +176,7 @@ rule gather_penetration:
     script: "../../src/plot_penetration_times.py"
 
 def gather_input(wildcards):
-    files = glob("data/raw/*nd2")
+    files = glob("data/raw/fig3/*nd2")
     return [f.replace(".nd2", "_slope.png") for f in files] + [
         f.replace(".nd2", "_penetration_time_new.png") for f in files
     ]
@@ -186,28 +187,34 @@ rule gather:
         gather_penetration=rules.gather_penetration.output.png,
 
 files = [
-    "0TMP-FAST_50um_1",
-    "0TMP-FAST_80um_2",
-    "0TMP-FAST_200um_3",
-    "0TMP-FAST_400um_3",
+        # "0TMP-FAST_50um_1",
+    "Fig.3_e,f,g_TrimFABS_ANOX_50um_1",
+    # "0TMP-FAST_80um_2",
+    "Fig.3_g_TrimFABS_ANOX_80um_1",
+    # "0TMP-FAST_200um_3",
+    "Fig.3_g_TrimFABS_ANOX_250um_2",
+    # "0TMP-FAST_400um_3",
+    "Fig.3_e,f,g_TrimFABS_ANOX_400um_3",
 ]
 additional_files = [
-    "pFAST_control",
-    "TMP-FAST_300_control_HMBR_1",
+        # "pFAST_control",
+        # "TMP-FAST_300_control_HMBR_1",
 ]
-rule figure:
+rule fig3:
     output:
-        png="data/raw/figure/figure.png",
-        svg="data/raw/figure/figure.svg",
-        pdf="data/raw/figure/figure.pdf",
+        png="results/fig3/figure.png",
+        svg="results/fig3/figure.svg",
+        pdf="results/fig3/figure.pdf",
     input:
-        nd2_gfp=expand("data/raw/{file}.nd2", file=files),
-        nd2_red=expand("data/raw/mScarlet/{file}.nd2", file=
+        nd2_gfp=expand("data/raw/fig3/{file}.nd2", file=files),
+        nd2_red=expand("data/raw/fig3/{file}.nd2", file=
             [
-                "TMP-FAST_50_1_mScarlet",
-                "TMP-FAST_80_2_mScarlet",
-                "TMP-FAST_200_3_mScarlet",
-                "TMP-FAST_400_3_mScarlet",
+                # "TMP-FAST_50_1_mScarlet",
+                "Fig.3_e_TrimFABS_ANOX_50um_1_mScarlet",
+                # "TMP-FAST_80_2_mScarlet",
+                # "TMP-FAST_200_3_mScarlet",
+                # "TMP-FAST_400_3_mScarlet",
+                "Fig.3_e_TrimFABS_ANOX_400um_3_mScarlet",
             ],
         ),
         # edt=expand("data/raw/{file}_edt.tif", file=files),
@@ -222,12 +229,11 @@ rule figure:
         slopes=rules.gather_slopes.output.csv,
         times=rules.gather_penetration.output.csv,
         penetration_times=expand(
-            "data/raw/{file}_penetration_time.yaml",
+            "data/preprocessed/fig3/{file}_penetration_time.yaml",
             file=files+additional_files,
         ),
-        script="src/figure.py",
     conda: "../envs/plotting.yaml"
-    script: "../../src/figure.py"
+    script: "../../src/fig3.py"
 
 rule HMBR:
     input:

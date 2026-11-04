@@ -1,14 +1,20 @@
+from typing import TYPE_CHECKING
+
 import nd2
 import numpy as np
-from snakemake.script import snakemake
-from tqdm import trange
-from tifffile import imwrite
+from scipy.ndimage import binary_fill_holes
 from skimage.filters import threshold_otsu
 from skimage.measure import label, regionprops
-from scipy.ndimage import binary_fill_holes
+from tifffile import imwrite
+from tqdm import trange
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 from helpers import END_TIME_CUTOFF
-
 
 img = nd2.ND2File(snakemake.input.nd2)
 
@@ -21,7 +27,7 @@ time_cutoff = np.argwhere(exp_times < END_TIME_CUTOFF).max()
 
 dask = img.to_dask()
 
-gfp = dask[:time_cutoff, 0, ...].compute()
+gfp = dask[:time_cutoff, ...].compute()
 
 thresholded = np.empty_like(gfp, dtype=bool)
 for i in range(gfp.shape[0]):

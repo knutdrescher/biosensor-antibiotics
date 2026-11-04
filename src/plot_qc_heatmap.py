@@ -1,8 +1,14 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from snakemake.script import snakemake
+from typing import TYPE_CHECKING
 
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 heatmap_mean = np.load(snakemake.input.i_mean)
 heatmap_std = np.load(snakemake.input.i_std)
