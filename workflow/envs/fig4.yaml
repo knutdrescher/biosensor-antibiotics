@@ -1,0 +1,15 @@
+name: fig4
+dependencies:
+  - python
+  - pandas
+  - matplotlib
+  - seaborn
+  - pip
+  - scipy
+  - numpy
+  - scikit-image
+  - tqdm
+  - pip:
+    - openpyxl
+    - nd2
+    - tifffile

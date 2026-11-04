@@ -12,7 +12,9 @@ Version 0.1.0
 
 # Instructions to reproduce figures
 
-1. Install `snakemake` and `conda` on your system. See system requirements.
+The software in this repository produces the panels Fig. 2c, Fig. 2d, Fig. 3f, Fig. 3g and Fig. 4h as well as Supp. Fig. 8b.
+
+1. Install `snakemake` and `conda` on your system. See system requirements. This should take ~20 minutes.
 2. Clone this repository.
 3. Copy the raw data from [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
     1. Copy the contents of `Fig3.zip` to `data/raw/fig3`, do the same for `Fig4.zip` and `SuppFig8.zip`.
@@ -20,15 +22,24 @@ Version 0.1.0
     3. Copy the file `Fig.2_c_d.xlsx` into `data/preprocessed`.
 4. Run the following commands to create figures
     ```shell
-    snakemake --use-conda fig2 -j1  # for panels of figure 2
+    # for panels of figure 2
+    # less than 5 minutes, including automatic installation of additional packages
+    snakemake --use-conda fig2 -j1  
+
+    # for panel h of figure 4
+    # ~20 minutes, including automatic installation of additional packages
+    snakemake --use-conda fig4 -j3  
     ```
+5. Have a look at the outputs in `results` folder.
 
 ## System requirements
 
-The software requires python and several python dependencies. These are organized via
+The software requires python and several python dependencies (see `workflow/envs` folder). These are organized via
 `conda` and `snakemake`. Please install this software. `conda` can be installed via [miniforge](https://github.com/conda-forge/miniforge#install) (recommended) or [miniconda](https://continuumio-docs.readthedocs-hosted.com/miniconda/install/).
 For `snakemake` follow
 [https://snakemake.readthedocs.io/en/stable/getting_started/installation.html](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
+
+The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubuntu 22.04.1 LTS` on WSL2 and with `conda==` and `snakemake==` on Windows 11.
 
 ## Project organization
 
@@ -58,8 +69,6 @@ For `snakemake` follow
 ```
 
 ### Code
-
-Fig. 2c and Fig. 2d were calculated and plotted with `notebooks/2025-04-01-triton-macrophage-experiments.ipynb`.
 
 Fig. 3f and Fig. 3g were computed and plotted with the snakemake workflow present under `workflow/rules/analysis.smk`. The python scripts under `src` belong to this workflow.
 
