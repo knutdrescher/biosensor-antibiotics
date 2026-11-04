@@ -18,7 +18,7 @@ The software in this repository produces the panels Fig. 2c, Fig. 2d, Fig. 3f, F
 2. Clone this repository.
 3. Copy the raw data from [https://doi.org/10.5281/zenodo.18486202](https://doi.org/10.5281/zenodo.18486202).
     1. Copy the contents of `Fig3.zip` to `data/raw/fig3`, do the same for `Fig4.zip` and `SuppFig8.zip`.
-    2. Copy the contents of `Fig4_lbl.zip` to `data/preprocessed/fig4`, do the same for `SuppFig8_lbl.zip`.
+    2. Copy the contents of `Fig4_lbl.zip` to `data/preprocessed/fig4`, do the same for `SuppFig8_lbl.zip`. Copy the contents of `Fig3_manual_penetration_times.zip` to `data/preprocessed/fig3`.
     3. Copy the file `Fig.2_c_d.xlsx` into `data/preprocessed`.
 4. Run the following commands to create figures
     ```shell
