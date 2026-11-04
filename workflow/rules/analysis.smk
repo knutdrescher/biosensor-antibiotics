@@ -38,7 +38,7 @@ rule edt_analysis_heatmap_calculation:
         exp_times="data/processed/nd2/{file}/exp_times.npy",
         deriv_time="data/processed/nd2/{file}/deriv_time.npy",
         x="data/processed/nd2/{file}/x.npy",
-        edt="data/raw/{file}_edt.tif",
+        edt="data/processed/nd2/{file}_edt.tif",
     conda: "../envs/image-analysis.yaml"
     script: "../../src/edt_analysis.py"
 
