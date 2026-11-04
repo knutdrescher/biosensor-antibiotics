@@ -53,7 +53,7 @@ rule plot_qc_heatmap:
         x=rules.edt_analysis_heatmap_calculation.output.x,
         script="src/plot_qc_heatmap.py",
     output:
-        png="data/results/fig3/{file}_qc.png",
+        png="results/fig3/qc/{file}_qc.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_qc_heatmap.py"
 
@@ -65,7 +65,7 @@ rule slope:
         script="src/slope.py",
     output:
         yaml="data/processed/nd2/{file}/slope.yaml",
-        png="data/results/fig3/{file}_slope.png",
+        png="results/fig3/qc/{file}_slope.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/slope.py"
 
@@ -80,7 +80,7 @@ rule penetration_time_new:
         script="src/penetration_time_new.py",
     output:
         yaml="data/processed/nd2/{file}/penetration_time_new.yaml",
-        png="data/results/fig3/{file}_penetration_time_new.png",
+        png="results/fig3/qc/{file}_penetration_time_new.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/penetration_time_new.py"
 
@@ -95,7 +95,7 @@ rule penetration_time:
         script="src/penetration_time.py",
     output:
         yaml="data/processed/nd2/{file}/penetration_time.yaml",
-        png="data/results/fig3/{file}_penetration_time.png",
+        png="results/fig3/qc/{file}_penetration_time.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/penetration_time.py"
 
@@ -153,7 +153,7 @@ rule gather_slopes:
         script="src/plot_slopes.py",
     output:
         csv="data/processed/slopes.csv",
-        png="data/results/fig3/slopes.png",
+        png="results/fig3/qc/slopes.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_slopes.py"
 
@@ -171,7 +171,7 @@ rule gather_penetration:
         # ),
     output:
         csv="data/processed/penetration_times.csv",
-        png="data/results/fig3/penetration_times.png",
+        png="results/fig3/qc/penetration_times.png",
     conda: "../envs/plotting.yaml"
     script: "../../src/plot_penetration_times.py"
 
