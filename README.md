@@ -33,6 +33,14 @@ The software in this repository produces the panels Fig. 2c, Fig. 2d, Fig. 3f, F
     # for panel h of figure 4
     # ~20 minutes, including automatic installation of additional packages
     snakemake --use-conda fig4 -j3  
+
+    # for panel b of supplementary figure 8
+    # ~15 minutes, including automatic installation of additional packages
+    snakemake --use-conda suppfig8 -j2
+    # too increase speed use -j4, might crash due to insufficient RAM
+
+    # rule to run all at once (~30 minutes)
+    snakemake --use-conda fig2 fig3 fig4 suppfig8 -j2
     ```
 5. Have a look at the outputs in `results` folder.
 
@@ -44,6 +52,12 @@ For `snakemake` follow
 [https://snakemake.readthedocs.io/en/stable/getting_started/installation.html](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html).
 
 The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubuntu 22.04.1 LTS` on WSL2 and with `conda==26.9.4` and `snakemake==9.27.1` on Windows 11.
+
+### Hardware
+
+No special hardware requirements are necessary. The above snakemake commands run some
+jobs in parallel which might consume a lot of RAM and lead to a crash. If your system
+has less than 32 GB of RAM, use `-j1` or `-j2` in all the commands.
 
 ## Project organization
 
@@ -68,16 +82,10 @@ The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubu
 │       ├── fig4       <- Raw files for Fig. 4
 │       └── suppfig8   <- Raw files for Supp. Fig. 8
 ├── results            <- Output files and figures
-├── notebooks          <- Preliminary notebooks
+├── notebooks          <- Preliminary notebooks (legacy)
 └── src                <- Source code
 
 ```
-
-### Code
-
-Fig. 3f and Fig. 3g were computed and plotted with the snakemake workflow present under `workflow/rules/analysis.smk`. The python scripts under `src` belong to this workflow.
-
-Fig. 4h was analyzed and plotted with `notebooks/2025-12-22-inverted-bladder-model.ipynb`. The supplementary figure including more results on the inverted bladder model was generated with the notebooks in `notebooks\inverted-bladder-model`.
 
 ### Data
 
