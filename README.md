@@ -60,6 +60,7 @@ The software has been tested with `conda==25.5.0` and `snakemake==9.9.0` on `Ubu
 ├── data               <- All project data, ignored by git
 │   ├── processed      <- Intermediate files
 │   ├── preprocessed   <- Intermediate files that are externally supplied
+│   │   ├── fig3       <- Manual time annotations for Fig. 3
 │   │   ├── fig4       <- Label data for Fig. 4
 │   │   └── suppfig8   <- Label data for Supp. Fig. 8
 │   └── raw            <- The original, immutable data dump
