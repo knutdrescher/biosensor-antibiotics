@@ -1,4 +1,3 @@
-import os
 from glob import glob
 from pathlib import Path
 
@@ -14,11 +13,9 @@ rule segmentation:
 
 def lbl_input_func(wildcards):
     file = wildcards.file
-    auto = f"{file}_lbl.tif"
-    manual = f"{file}_manual-lbl.tif"
-    path = "data/processed/fig3"
-    auto = os.path.join(path, auto)
-    manual = os.path.join(path, manual)
+    path = Path("data/processed/fig3")
+    auto = path / f"{file}_lbl.tif"
+    manual = path / f"{file}_manual-lbl.tif"
     if Path(manual).exists():
         return manual
     else:
@@ -114,8 +111,8 @@ def passes(f):
 
 def gather_slopes_input(wildcards):
     files = glob("data/raw/fig3/*nd2")
-    path = "data/processed/nd2"
-    return [os.path.join(path, Path(f).stem + "/slope.yaml") for f in files if passes(f)]
+    path = Path("data/processed/nd2")
+    return [path / Path(f).stem / "slope.yaml" for f in files if passes(f)]
 rule gather_slopes:
     input:
         yamls=gather_slopes_input,
@@ -159,8 +156,8 @@ rule gather_slopes:
 
 def gather_penetration_input(wildcards):
     files = glob("data/raw/fig3/*nd2")
-    path = "data/processed/nd2"
-    return [os.path.join(path, Path(f).stem + "/penetration_time_new.yaml") for f in files if passes(f)]
+    path = Path("data/processed/nd2")
+    return [path / Path(f).stem / "penetration_time_new.yaml" for f in files if passes(f)]
 rule gather_penetration:
     input:
         yamls=gather_penetration_input,
