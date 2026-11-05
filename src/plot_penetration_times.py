@@ -1,8 +1,15 @@
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import yaml
 from scipy.stats import spearmanr
-from snakemake.script import snakemake
+
+try:
+    from snakemake.script import snakemake
+except ImportError:
+    if TYPE_CHECKING:
+        from snakemake.iocontainers import snakemake  # noqa: TC004
 
 times = ([], [])
 errors = ([], [])
